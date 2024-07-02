@@ -246,7 +246,7 @@ def plot_predicted_data(y_predict, fh):
 st.title('Economic Indicator Forecast (FRED Data)')
 
 # Specify the path to your data file
-file_path = 'C:/Users/Bhanu prakash/OneDrive - Vijaybhoomi International School/Desktop/Pycaret_SS/MRTSSM4451USS_edited.xlsx'
+file_path = 'MRTSSM4451USS_edited.xlsx'
 
 try:
     data = load_data(file_path)
