@@ -187,9 +187,13 @@ st.set_page_config(layout='wide', page_title='Economic Indicator(FRED Data)', pa
 # Function to load data
 @st.cache_data
 def load_data(file_url):
-    data = pd.read_excel(file_url)
-    data.set_index('observation_date', inplace=True)
-    return data
+    try:
+        data = pd.read_excel(file_url)
+        data.set_index('observation_date', inplace=True)
+        return data
+    except Exception as e:
+        st.error(f"Error loading data: {e}")
+        return None
 
 # Function to create and plot model predictions
 def plot_predictions(train, fh, model_code='auto_arima'):
