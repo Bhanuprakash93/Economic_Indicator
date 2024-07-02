@@ -74,7 +74,7 @@ st.set_page_config(layout='wide', page_title='Economic Indicator(FRED Data)', pa
 st.title('Economic Indicator Forecast (FRED Data)')
 
 # File uploader
-file_path = st.text_input('Enter the path to your Excel file:', 'C:/Users/Bhanu prakash/OneDrive - Vijaybhoomi International School/Desktop/Pycaret_SS/MRTSSM4451USS_edited.xlsx')
+file_path = st.text_input('Enter the path to your Excel file:', 'MRTSSM4451USS_edited.xlsx')
 
 if file_path:
     try:
