@@ -186,8 +186,8 @@ st.set_page_config(layout='wide', page_title='Economic Indicator(FRED Data)', pa
 
 # Function to load data
 @st.cache_data
-def load_data(file_path):
-    data = pd.read_excel(file_path)
+def load_data(file_url):
+    data = pd.read_excel(file_url)
     data.set_index('observation_date', inplace=True)
     return data
 
