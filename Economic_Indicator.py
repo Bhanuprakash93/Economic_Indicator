@@ -70,7 +70,7 @@ st.set_page_config(layout='wide', page_title='Economic Indicator Forecast (FRED 
 st.title('Economic Indicator Forecast (FRED Data)')
 
 # Fixed file path (replace with your actual file path)
-file_path = 'C:/Users/Bhanu prakash/OneDrive - Vijaybhoomi International School/Desktop/Pycaret_SS/MRTSSM4451USS_edited.xlsx'
+file_path = 'MRTSSM4451USS_edited.xlsx'
 
 try:
     data = load_data(file_path)
