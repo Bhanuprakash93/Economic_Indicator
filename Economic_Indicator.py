@@ -186,14 +186,10 @@ st.set_page_config(layout='wide', page_title='Economic Indicator(FRED Data)', pa
 
 # Function to load data
 @st.cache_data
-def load_data(file_url):
-    try:
-        data = pd.read_excel(file_url)
-        data.set_index('observation_date', inplace=True)
-        return data
-    except Exception as e:
-        st.error(f"Error loading data: {e}")
-        return None
+def load_data(file_path):
+    data = pd.read_excel(file_path)
+    data.set_index('observation_date', inplace=True)
+    return data
 
 # Function to create and plot model predictions
 def plot_predictions(train, fh, model_code='auto_arima'):
@@ -250,10 +246,10 @@ def plot_predicted_data(y_predict, fh):
 st.title('Economic Indicator Forecast (FRED Data)')
 
 # Specify the path to your data file
-file_url = 'https://github.com/Bhanuprakash93/Economic_Indicator/blob/main/MRTSSM4451USS_edited.xlsx'
+file_path = 'Economic_Indicator/MRTSSM4451USS_edited.xlsx'
 
 try:
-    data = load_data(file_url)
+    data = load_data(file_path)
 
     # Display the first few rows of the dataframe and start/end dates
     st.write('Data preview:')
