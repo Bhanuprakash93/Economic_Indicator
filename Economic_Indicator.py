@@ -246,10 +246,10 @@ def plot_predicted_data(y_predict, fh):
 st.title('Economic Indicator Forecast (FRED Data)')
 
 # Specify the path to your data file
-file_path = 'MRTSSM4451USS_edited.xlsx'
+file_url = 'https://github.com/Bhanuprakash93/Economic_Indicator/blob/main/MRTSSM4451USS_edited.xlsx'
 
 try:
-    data = load_data(file_path)
+    data = load_data(file_url)
 
     # Display the first few rows of the dataframe and start/end dates
     st.write('Data preview:')
