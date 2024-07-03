@@ -180,6 +180,7 @@ import matplotlib.pyplot as plt
 from pycaret.time_series import TSForecastingExperiment
 from sklearn.metrics import mean_absolute_percentage_error
 from matplotlib.dates import DateFormatter
+from matplotlib.ticker import FuncFormatter
 
 # Set page config
 st.set_page_config(layout='wide', page_title='Economic Indicator (FRED Data)', page_icon=":chart_with_upwards_trend:")
@@ -207,7 +208,7 @@ def plot_predictions(train, fh, model_code='auto_arima'):
 
 # Function to plot full data
 def plot_full_data(data):
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(16, 5))
     
     # Plot full data
     ax.plot(data.index, data['MRTSSM4451USS'], marker='o', linestyle='-', color='b', label='Actual')
@@ -221,11 +222,14 @@ def plot_full_data(data):
     # Format x-axis to show month and year
     ax.xaxis.set_major_formatter(DateFormatter('%b %Y'))
 
+    # Format y-axis to include commas for thousands separators
+    ax.yaxis.set_major_formatter(FuncFormatter(lambda x, _: f'{x:,.0f}'))
+
     return fig
 
 # Function to plot predicted data
 def plot_predicted_data(y_predict, fh):
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(16, 5))
     
     # Convert PeriodIndex to DatetimeIndex
     y_predict.index = y_predict.index.to_timestamp()
@@ -234,15 +238,52 @@ def plot_predicted_data(y_predict, fh):
     y_pred_index = pd.date_range(start=y_predict.index[0], periods=fh, freq='MS')
     ax.plot(y_pred_index, y_predict['y_pred'], marker='o', linestyle='--', color='r', label='Predicted')
 
+    # Set x-axis ticks to monthly intervals
+    ax.set_xticks(y_pred_index)
+    
+    # Format x-axis to show month and year
+    ax.xaxis.set_major_formatter(DateFormatter('%b %Y'))
+    
     ax.set_xlabel('Time')
     ax.set_ylabel('Value')
     ax.set_title(f'Predicted Values for {fh} Months')
     ax.legend()
     ax.grid(True)
+
+    # Rotate x-axis labels for better readability
+    plt.xticks(rotation=45)
+
+    # Format y-axis to include commas for thousands separators
+    ax.yaxis.set_major_formatter(FuncFormatter(lambda x, _: f'{x:,.0f}'))
+    
+    return fig
+
+# Function to plot actual vs predicted values
+def plot_actual_vs_predicted(time_index, actual_values, predicted_values, fh):
+    fig, ax = plt.subplots(figsize=(16, 6))
+    
+    # Plot actual vs predicted values for the selected forecast horizon
+    ax.plot(time_index, actual_values, marker='o', linestyle='-', color='b', label='Actual')
+    ax.plot(time_index, predicted_values, marker='o', linestyle='--', color='r', label='Predicted')
+    
+    # Set x-axis ticks to monthly intervals
+    ax.set_xticks(time_index)
+    
+    ax.set_xlabel('Time')
+    ax.set_ylabel('Value')
+    ax.set_title(f'Actual vs Predicted Values (Test Data for {fh} Months)')
+    ax.legend()
+    ax.grid(True)
     
     # Format x-axis to show month and year
     ax.xaxis.set_major_formatter(DateFormatter('%b %Y'))
+    
+    # Rotate x-axis labels for better readability
+    plt.xticks(rotation=45)
 
+    # Format y-axis to include commas for thousands separators
+    ax.yaxis.set_major_formatter(FuncFormatter(lambda x, _: f'{x:,.0f}'))
+    
     return fig
 
 # Page title
@@ -290,19 +331,12 @@ try:
             actual_values = test['MRTSSM4451USS'][:fh].values
             predicted_values = y_predict['y_pred'].values
 
+            # Round off the predicted values
+            predicted_values = predicted_values.round()
+
             # Plot actual vs predicted values for the selected forecast horizon
-            fig, ax = plt.subplots(figsize=(10, 6))
             time_index = pd.date_range(start=end_date + pd.DateOffset(months=1), periods=fh, freq='MS')
-            ax.plot(time_index, actual_values, marker='o', linestyle='-', color='b', label='Actual')
-            ax.plot(time_index, predicted_values, marker='o', linestyle='--', color='r', label='Predicted')
-            ax.set_xlabel('Time')
-            ax.set_ylabel('Value')
-            ax.set_title(f'Actual vs Predicted Values (Test Data for {fh} Months)')
-            ax.legend()
-            ax.grid(True)
-            
-            # Format x-axis to show month and year
-            ax.xaxis.set_major_formatter(DateFormatter('%b %Y'))
+            fig = plot_actual_vs_predicted(time_index, actual_values, predicted_values, fh)
             
             # Display the plot using st.pyplot()
             st.pyplot(fig)
@@ -326,6 +360,9 @@ try:
             final_model = exp.finalize_model(best_model)
             y_predict_fulldata = exp.predict_model(final_model)
 
+            # Round off the predicted values
+            y_predict_fulldata['y_pred'] = y_predict_fulldata['y_pred'].round()
+
             # Plot the full data first
             st.subheader('Full Data Plot')
             fig_full = plot_full_data(data)
@@ -336,7 +373,8 @@ try:
             fig_predicted = plot_predicted_data(y_predict_fulldata, fh_full)
             st.pyplot(fig_predicted)
 
-            # Display the predicted values for full data predictions
+            # Display the predicted values with month and year only
+            y_predict_fulldata.index = y_predict_fulldata.index.strftime('%b %Y')
             st.write('Predicted Values:')
             st.write(y_predict_fulldata)
 
