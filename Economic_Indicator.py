@@ -180,20 +180,12 @@ import matplotlib.pyplot as plt
 from pycaret.time_series import TSForecastingExperiment
 from sklearn.metrics import mean_absolute_percentage_error
 from matplotlib.dates import DateFormatter
-import os
 
 # Set page config
 st.set_page_config(layout='wide', page_title='Economic Indicator (FRED Data)', page_icon=":chart_with_upwards_trend:")
 
 # Access secrets from secrets.toml
-db_username = st.secrets["db_username"]
-db_password = st.secrets["db_password"]
 file_path = st.secrets["data"]["file_path"]
-
-# Display the secrets to verify (you may remove this after verification)
-st.write("DB username:", db_username)
-st.write("DB password:", db_password)
-st.write("File path:", file_path)
 
 # Function to load data
 @st.cache_data
@@ -352,4 +344,3 @@ except FileNotFoundError:
     st.error("The specified file path is not valid. Please enter a valid file path.")
 except Exception as e:
     st.error(f"An error occurred: {e}")
-
